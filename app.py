@@ -1,9 +1,8 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
-animes = [
-    {
+animes = [{
         "id" : 1,
         "titulo" : "One Piece",
         "poster" : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg8qsxd8TVLcD6T5KBIDive3PbgPGg7tJvJA&usqp=CAU", 
@@ -11,8 +10,7 @@ animes = [
         "rating" : 9.7, 
         "reviews" : 4568, 
         "season" : "Summer 2023", 
-        "tipo" : "Shonen"
-        }, 
+        "tipo" : "Shonen"}, 
      { 
         "id" : 2,
         "titulo" : "Fullmetal Alchemist",
@@ -43,9 +41,30 @@ def index():
 def anime_list():
     return jsonify(animes)
 
-#@app.route("/anime", method = ['POST'])
-#def create_anime():
-    
+@app.route("/anime/<int:id>")
+def create_anime(id):
+    anime_found = [anime for anime in animes if anime['id'] == id]
+    if (len(anime_found) > 0):
+        return jsonify({"id" : anime_found[0]})
+    return jsonify({"message" : "Anime not found :c"})
+
+@app.route("/anime", methods = ['POST'])
+def addAnime():
+    new_anime = {
+
+        "id" : request.json['id'],
+        "titulo" : request.json['titulo'],
+        "poster" : request.json['poster'], 
+        "categoria" : request.json['categoria'], 
+        "rating" : request.json['rating'], 
+        "reviews" : request.json['reviews'],
+        "season" : request.json['season'],
+        "tipo" : request.json['tipo'] 
+    }
+    animes.append(new_anime)
+    return jsonify({"message: " : "Anime Added Succesfully"})
+
+
 
 if __name__ == "__main__":
-    app.run(debug = True)
+    app.run(debug=True)
