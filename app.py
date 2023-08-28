@@ -64,7 +64,13 @@ def addAnime():
     animes.append(new_anime)
     return jsonify({"message: " : "Anime Added Succesfully"})
 
-
+@app.route("/anime/<int:id>", methods = ['DELETE'])
+def deleteAnime(id):
+    animetodelete = [anime for anime in animes if anime['id'] == id]
+    if (len(animetodelete) > 0):
+        animes.remove(animetodelete[0])
+        return jsonify({"message" : "Anime Deleted Succesfully"})
+    return jsonify({"message" : "Anime not found :c"})
 
 if __name__ == "__main__":
     app.run(debug=True)
