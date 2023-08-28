@@ -66,11 +66,43 @@ def addAnime():
 
 @app.route("/anime/<int:id>", methods = ['DELETE'])
 def deleteAnime(id):
-    animetodelete = [anime for anime in animes if anime['id'] == id]
-    if (len(animetodelete) > 0):
-        animes.remove(animetodelete[0])
+    anime_found = [anime for anime in animes if anime['id'] == id]
+    if (len(anime_found) > 0):
+        animes.remove(anime_found[0])
         return jsonify({"message" : "Anime Deleted Succesfully"})
     return jsonify({"message" : "Anime not found :c"})
 
+@app.route("/anime/<int:id>", methods = ['PUT'])
+def updateCAnime(id):    
+    anime_found = [anime for anime in animes if anime['id'] == id]
+    if (len(anime_found) > 0):
+        anime_found[0]['id'] = request.json['id']
+        anime_found[0]['titulo'] = request.json['titulo']
+        anime_found[0]['poster'] = request.json['poster']
+        anime_found[0]['categoria'] = request.json['categoria']
+        anime_found[0]['rating'] = request.json['rating']
+        anime_found[0]['reviews'] = request.json['reviews']
+        anime_found[0]['season'] = request.json['season']
+        anime_found[0]['tipo'] = request.json['tipo']
+        return jsonify({"message" : "Anime Updated"})
+    return jsonify({"message" : "Anime not found :c"})
+
+@app.route("/anime/<int:id>", methods = ['PATCH'])
+def updatePAnime(id):
+
+    anime_found = [anime for anime in animes if anime['id'] == id]
+        
+    if (len(anime_found) == 0):
+        return jsonify({"message" : "Anime not found :c"})
+
+    anime = anime_found[0]
+    patch_data = request.json
+    
+    for field, value in patch_data.items():
+        if field in anime:
+            anime[field] = value
+
+    return jsonify({"message" : "Anime Updated"})
+        
 if __name__ == "__main__":
     app.run(debug=True)
